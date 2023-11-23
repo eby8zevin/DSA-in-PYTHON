@@ -18,6 +18,7 @@ func main() {
 	e := echo.New()
 
 	controller.GetAllTodosController(e, db)
+	controller.CreateTodoController(e, db)
 
 	e.Start(":8080")
 }
