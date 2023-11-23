@@ -10,7 +10,7 @@ import (
 )
 
 func CreateTodoController(e *echo.Echo, db *sql.DB) {
-	e.POST("/create_todos",func(ctx echo.Context) error {
+	e.POST("/todos",func(ctx echo.Context) error {
 		var request model.CreateRequest
 		json.NewDecoder(ctx.Request().Body).Decode(&request)
 
