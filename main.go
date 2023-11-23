@@ -20,6 +20,7 @@ func main() {
 	controller.GetAllTodosController(e, db)
 	controller.CreateTodoController(e, db)
 	controller.DeleteTodoController(e, db)
+	controller.UpdateTodoController(e, db)
 
 	e.Start(":8080")
 }
