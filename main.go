@@ -21,6 +21,7 @@ func main() {
 	controller.CreateTodoController(e, db)
 	controller.DeleteTodoController(e, db)
 	controller.UpdateTodoController(e, db)
+	controller.CheckTodoController(e, db)
 
 	e.Start(":8080")
 }
