@@ -11,6 +11,19 @@ import (
 
 func CheckTodoController(e *echo.Echo, db *sql.DB) {
 	e.PATCH("todos/:id/check",func(ctx echo.Context) error {
+		user := ctx.Get("USER").(model.AuthClaimJwt)
+
+		permissionFound := false
+		for _, scope := range user.UserScopes {
+			if scope == "todos:update" {
+				permissionFound = true
+				break
+			}
+		}
+		if !permissionFound {
+			return ctx.String(http.StatusForbidden, "Forbidden")
+		}
+
 		id := ctx.Param("id")
 
 		var request model.CheckRequest
@@ -25,9 +38,10 @@ func CheckTodoController(e *echo.Echo, db *sql.DB) {
 		}
 
 		_, err := db.Exec(
-			"UPDATE todos SET done = ? WHERE id = ?",
+			"UPDATE todos SET done = ? WHERE id = ? AND user_id = ?",
 			doneInt,
 			id,
+			user.UserId,
 		)
 		if err != nil {
 			return ctx.String(http.StatusInternalServerError, err.Error())
