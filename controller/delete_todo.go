@@ -10,11 +10,25 @@ import (
 
 func DeleteTodoController(e *echo.Echo, db *sql.DB) {
 	e.DELETE("/todos/:id", func(ctx echo.Context) error {
+		user := ctx.Get("USER").(model.AuthClaimJwt)
+
+		permissionFound := false
+		for _, scope := range user.UserScopes {
+			if scope == "todos:delete" {
+				permissionFound = true
+				break
+			}
+		}
+		if !permissionFound {
+			return ctx.String(http.StatusForbidden, "Forbidden")
+		}
+
 		id := ctx.Param("id")
 
 		result, err := db.Exec(
-			"DELETE FROM todos WHERE id = ?",
+			"DELETE FROM todos WHERE id = ? AND user_id = ?",
 			id,
+			user.UserId,
 		)
 		if err != nil {
 			return ctx.String(http.StatusInternalServerError, err.Error())
